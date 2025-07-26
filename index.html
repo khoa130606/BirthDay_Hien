@@ -1,57 +1,123 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Phép màu sinh nhật</title>
   <style>
-    html, body {
+    body {
       margin: 0;
-      padding: 0;
+      background: #000;
       overflow: hidden;
-      background-color: black;
       font-family: 'Segoe UI', sans-serif;
+      color: white;
+      text-align: center;
     }
 
-    #startButton {
+    #startBtn {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
+      background: pink;
       padding: 20px 40px;
-      font-size: 28px;
-      background: linear-gradient(45deg, #ff66cc, #ff1493);
-      color: white;
-      border: 3px solid white;
+      font-size: 24px;
+      border: none;
       border-radius: 15px;
-      box-shadow: 0 0 30px rgba(255, 20, 147, 0.8);
       cursor: pointer;
       z-index: 10;
-      animation: pulse 2s infinite;
+      box-shadow: 0 0 20px pink;
+      transition: 0.3s;
     }
 
-    @keyframes pulse {
-      0% { transform: translate(-50%, -50%) scale(1); }
-      50% { transform: translate(-50%, -50%) scale(1.1); }
-      100% { transform: translate(-50%, -50%) scale(1); }
+    #startBtn:hover {
+      background: hotpink;
+      box-shadow: 0 0 30px hotpink;
     }
 
-    #heartCanvas {
+    .heart {
       position: absolute;
-      top: 0;
+      width: 100px;
+      height: 90px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(1);
+      animation: beat 1s infinite;
+      z-index: 1;
+    }
+
+    .heart::before,
+    .heart::after {
+      content: "";
+      position: absolute;
+      width: 100px;
+      height: 90px;
+      background: red;
+      border-radius: 50px 50px 0 0;
+    }
+
+    .heart::before {
+      left: -50px;
+    }
+
+    .heart::after {
+      top: -50px;
+    }
+
+    @keyframes beat {
+      0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+      }
+      50% {
+        transform: translate(-50%, -50%) scale(1.2);
+      }
+    }
+
+    .mini-heart {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: pink;
+      transform: rotate(45deg);
+      animation: float 2s ease-in forwards;
+      opacity: 0.8;
+    }
+
+    .mini-heart::before,
+    .mini-heart::after {
+      content: "";
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: pink;
+      border-radius: 50%;
+    }
+
+    .mini-heart::before {
+      top: -5px;
       left: 0;
+    }
+
+    .mini-heart::after {
+      left: -5px;
+      top: 0;
+    }
+
+    @keyframes float {
+      to {
+        transform: translateY(-100px) rotate(45deg);
+        opacity: 0;
+      }
     }
 
     #message {
       display: none;
+      font-size: 24px;
+      color: #fff;
       position: absolute;
       top: 70%;
-      width: 100%;
-      text-align: center;
-      font-size: 30px;
-      color: pink;
-      text-shadow: 2px 2px 5px white;
-      z-index: 10;
-      animation: fadeIn 2s ease-in;
+      left: 50%;
+      transform: translateX(-50%);
+      animation: fadeIn 2s ease-in-out forwards;
     }
 
     @keyframes fadeIn {
@@ -61,85 +127,43 @@
   </style>
 </head>
 <body>
-  <button id="startButton">Bắt đầu</button>
-  <canvas id="heartCanvas"></canvas>
+
+  <button id="startBtn">Bắt đầu</button>
+
+  <audio id="music" src="phepmau.mp3"></audio>
+
+  <div class="heart" id="bigHeart" style="display: none;"></div>
   <div id="message">Chúc bé iu sinh nhật vui vẻ và nụ cười luôn thật tươi trên môi nha</div>
 
-  <audio id="bgMusic" src="phepmau.mp3"></audio>
-
   <script>
-    const startButton = document.getElementById("startButton");
-    const canvas = document.getElementById("heartCanvas");
-    const ctx = canvas.getContext("2d");
+    const startBtn = document.getElementById("startBtn");
+    const music = document.getElementById("music");
+    const heart = document.getElementById("bigHeart");
     const message = document.getElementById("message");
-    const audio = document.getElementById("bgMusic");
 
-    let width = window.innerWidth;
-    let height = window.innerHeight;
-    canvas.width = width;
-    canvas.height = height;
-
-    let hearts = [];
-
-    class Heart {
-      constructor() {
-        this.x = Math.random() * width;
-        this.y = height + Math.random() * 100;
-        this.size = Math.random() * 10 + 10;
-        this.speed = Math.random() * 1.5 + 0.5;
-        this.color = `hsl(${Math.random() * 360}, 100%, 70%)`;
-        this.alpha = 1;
-      }
-
-      update() {
-        this.y -= this.speed;
-        this.alpha -= 0.005;
-      }
-
-      draw() {
-        ctx.save();
-        ctx.globalAlpha = this.alpha;
-        ctx.fillStyle = this.color;
-        ctx.beginPath();
-        const x = this.x, y = this.y, size = this.size;
-        ctx.moveTo(x, y);
-        ctx.bezierCurveTo(x - size, y - size, x - size * 1.5, y + size / 2, x, y + size);
-        ctx.bezierCurveTo(x + size * 1.5, y + size / 2, x + size, y - size, x, y);
-        ctx.fill();
-        ctx.restore();
-      }
+    function createMiniHeart() {
+      const mini = document.createElement("div");
+      mini.classList.add("mini-heart");
+      mini.style.left = Math.random() * window.innerWidth + "px";
+      mini.style.top = Math.random() * window.innerHeight + "px";
+      mini.style.background = `hsl(${Math.random() * 360}, 100%, 70%)`;
+      document.body.appendChild(mini);
+      setTimeout(() => mini.remove(), 2000);
     }
 
-    function animate() {
-      ctx.clearRect(0, 0, width, height);
-      if (Math.random() < 0.3) hearts.push(new Heart());
+    startBtn.onclick = () => {
+      startBtn.style.display = "none";
+      music.volume = 0.3;
+      music.play();
+      heart.style.display = "block";
 
-      hearts.forEach((heart, i) => {
-        heart.update();
-        heart.draw();
-        if (heart.alpha <= 0) hearts.splice(i, 1);
-      });
-
-      requestAnimationFrame(animate);
-    }
-
-    startButton.addEventListener("click", () => {
-      startButton.style.display = "none";
-      audio.volume = 0.2;
-      audio.play();
-      animate();
+      setInterval(createMiniHeart, 100);
 
       setTimeout(() => {
         message.style.display = "block";
       }, 5000);
-    });
-
-    window.addEventListener("resize", () => {
-      width = window.innerWidth;
-      height = window.innerHeight;
-      canvas.width = width;
-      canvas.height = height;
-    });
+    };
   </script>
+
 </body>
 </html>
