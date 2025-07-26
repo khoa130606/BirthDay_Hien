@@ -2,69 +2,59 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Phép màu</title>
+  <title>Trái tim phép màu</title>
   <style>
     body {
       margin: 0;
-      background-color: black;
+      background: black;
       overflow: hidden;
-      font-family: 'Arial', sans-serif;
+      font-family: 'Segoe UI', sans-serif;
     }
-
-    #start-container {
+    canvas {
+      display: block;
+    }
+    #startBtn {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      text-align: center;
-    }
-
-    #start-button {
-      padding: 16px 32px;
-      font-size: 24px;
-      background-color: #ff4081;
-      color: white;
+      padding: 20px 40px;
+      background: #f06292;
       border: none;
-      border-radius: 12px;
+      border-radius: 30px;
+      color: white;
+      font-size: 24px;
       cursor: pointer;
+      box-shadow: 0 0 20px #f06292;
       transition: 0.3s;
+      z-index: 2;
     }
-
-    #start-button:hover {
-      background-color: #e91e63;
-    }
-
-    canvas {
-      display: none;
+    #startBtn:hover {
+      background: #ec407a;
+      box-shadow: 0 0 30px #ec407a;
     }
   </style>
 </head>
 <body>
-  <div id="start-container">
-    <button id="start-button">Bắt đầu phép màu</button>
-  </div>
-  <canvas id="heart-canvas"></canvas>
-
-  <audio id="background-music" src="phepmau.mp3" preload="auto"></audio>
+  <button id="startBtn">Phép màu bắt đầu</button>
+  <canvas id="heartCanvas"></canvas>
+  <audio id="bgm" src="phepmau.mp3"></audio>
 
   <script>
-    const canvas = document.getElementById("heart-canvas");
+    const canvas = document.getElementById("heartCanvas");
     const ctx = canvas.getContext("2d");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    const startBtn = document.getElementById("startBtn");
+    const bgm = document.getElementById("bgm");
+    bgm.volume = 0.3; // nhạc nỏ nhẹ
 
-    const audio = document.getElementById("background-music");
-    audio.volume = 0.3; // Nhạc nhỏ
+    let particles = [];
 
-    document.getElementById("start-button").onclick = () => {
-      document.getElementById("start-container").style.display = "none";
-      canvas.style.display = "block";
-      audio.play();
-      animate();
-    };
-
-    const particles = [];
-    const colors = ["#ff4da6", "#ff66cc", "#ff3385", "#ff80bf", "#ff1a8c", "#ff99cc", "#e60073"];
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
 
     function heartFunction(t) {
       const x = 16 * Math.pow(Math.sin(t), 3);
@@ -72,38 +62,58 @@
       return { x, y };
     }
 
-    for (let i = 0; i < 800; i++) {
-      const t = Math.random() * Math.PI * 2;
-      const pos = heartFunction(t);
-      particles.push({
-        x: canvas.width / 2 + pos.x * 20,
-        y: canvas.height / 2 - pos.y * 20,
-        size: Math.random() * 2 + 1,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        phase: Math.random() * Math.PI * 2,
-      });
+    class Particle {
+      constructor(x, y, color) {
+        this.x = x;
+        this.y = y;
+        this.radius = Math.random() * 2 + 1;
+        this.color = color;
+        this.alpha = 1;
+        this.dx = (Math.random() - 0.5) * 1.5;
+        this.dy = (Math.random() - 0.5) * 1.5;
+      }
+      update() {
+        this.x += this.dx;
+        this.y += this.dy;
+        this.alpha -= 0.005;
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = this.color;
+        ctx.globalAlpha = this.alpha;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
     }
 
-    function animate(time) {
+    function animate() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      for (let p of particles) {
-        const beat = 1 + 0.2 * Math.sin(Date.now() * 0.005 + p.phase);
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size * beat, 0, Math.PI * 2);
-        ctx.fillStyle = p.color;
-        ctx.shadowColor = p.color;
-        ctx.shadowBlur = 10;
-        ctx.fill();
+      for (let i = 0; i < 5; i++) {
+        const t = Math.random() * Math.PI * 2;
+        const { x, y } = heartFunction(t);
+        const scale = 15;
+        const px = canvas.width / 2 + x * scale;
+        const py = canvas.height / 2 - y * scale;
+        const color = `hsl(${Math.random() * 360}, 100%, 70%)`;
+        particles.push(new Particle(px, py, color));
       }
+
+      particles.forEach((p, i) => {
+        p.update();
+        p.draw();
+        if (p.alpha <= 0) particles.splice(i, 1);
+      });
 
       requestAnimationFrame(animate);
     }
 
-    window.addEventListener("resize", () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    });
+    startBtn.onclick = () => {
+      bgm.play();
+      startBtn.remove();
+      animate();
+    };
   </script>
 </body>
 </html>
