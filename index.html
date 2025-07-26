@@ -2,14 +2,14 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <title>Phép màu sinh nhật</title>
+  <title>Trái tim phép màu</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
+      background: black;
       overflow: hidden;
-      background-color: black;
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Comic Sans MS', cursive;
     }
 
     #startButton {
@@ -17,128 +17,145 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      padding: 20px 40px;
-      font-size: 28px;
-      background: linear-gradient(45deg, #ff66cc, #ff1493);
+      font-size: 2rem;
+      padding: 1rem 2rem;
+      background-color: #ff69b4;
       color: white;
-      border: 3px solid white;
-      border-radius: 15px;
-      box-shadow: 0 0 30px rgba(255, 20, 147, 0.8);
+      border: none;
+      border-radius: 20px;
       cursor: pointer;
       z-index: 10;
-      animation: pulse 2s infinite;
     }
 
-    @keyframes pulse {
-      0% { transform: translate(-50%, -50%) scale(1); }
-      50% { transform: translate(-50%, -50%) scale(1.1); }
-      100% { transform: translate(-50%, -50%) scale(1); }
-    }
-
-    #heartCanvas {
+    canvas {
+      display: none;
       position: absolute;
       top: 0;
       left: 0;
     }
 
     #message {
-      display: none;
       position: absolute;
-      top: 70%;
-      width: 100%;
-      text-align: center;
-      font-size: 30px;
-      color: pink;
-      text-shadow: 2px 2px 5px white;
-      z-index: 10;
-      animation: fadeIn 2s ease-in;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
+      font-size: 2.5rem;
+      font-weight: bold;
+      text-shadow: 2px 2px 8px #ff69b4;
+      white-space: nowrap;
+      overflow: hidden;
+      border-right: .15em solid #fff;
+      width: 0;
+      animation:
+        typing 4s steps(40, end) forwards,
+        blink-caret 0.75s step-end infinite;
+      display: none;
+      z-index: 5;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+    @keyframes typing {
+      from { width: 0 }
+      to { width: 30ch }
+    }
+
+    @keyframes blink-caret {
+      from, to { border-color: transparent }
+      50% { border-color: white }
     }
   </style>
 </head>
 <body>
   <button id="startButton">Bắt đầu</button>
   <canvas id="heartCanvas"></canvas>
-  <div id="message">Chúc bé iu sinh nhật vui vẻ và nụ cười luôn thật tươi trên môi nha</div>
-
-  <audio id="bgMusic" src="phepmau.mp3"></audio>
+  <div id="message">Chúc bé iu sinh nhật vui vẻ và luôn nở nụ cười trên môi nhé !</div>
+  <audio id="bgMusic" src="phepmau.mp3" preload="auto"></audio>
 
   <script>
     const startButton = document.getElementById("startButton");
     const canvas = document.getElementById("heartCanvas");
     const ctx = canvas.getContext("2d");
+    const music = document.getElementById("bgMusic");
     const message = document.getElementById("message");
-    const audio = document.getElementById("bgMusic");
 
-    let width = window.innerWidth;
-    let height = window.innerHeight;
-    canvas.width = width;
-    canvas.height = height;
+    let particles = [];
+    const colors = ["#ff4d4d", "#ff66cc", "#ffccff", "#ff9999", "#ffe6e6", "#ffb3b3"];
 
-    let hearts = [];
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
 
-    class Heart {
-      constructor() {
-        this.x = Math.random() * width;
-        this.y = height + Math.random() * 100;
-        this.size = Math.random() * 10 + 10;
-        this.speed = Math.random() * 1.5 + 0.5;
-        this.color = `hsl(${Math.random() * 360}, 100%, 70%)`;
-        this.alpha = 1;
+    window.addEventListener("resize", resizeCanvas);
+
+    function createHeartPoints() {
+      let points = [];
+      for (let t = 0; t < Math.PI * 2; t += 0.05) {
+        let x = 16 * Math.pow(Math.sin(t), 3);
+        let y = 13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t);
+        points.push({x: x * 10, y: -y * 10});
       }
+      return points;
+    }
 
-      update() {
-        this.y -= this.speed;
-        this.alpha -= 0.005;
-      }
+    const heartPoints = createHeartPoints();
 
-      draw() {
-        ctx.save();
-        ctx.globalAlpha = this.alpha;
-        ctx.fillStyle = this.color;
-        ctx.beginPath();
-        const x = this.x, y = this.y, size = this.size;
-        ctx.moveTo(x, y);
-        ctx.bezierCurveTo(x - size, y - size, x - size * 1.5, y + size / 2, x, y + size);
-        ctx.bezierCurveTo(x + size * 1.5, y + size / 2, x + size, y - size, x, y);
-        ctx.fill();
-        ctx.restore();
+    function createParticles() {
+      particles = [];
+      for (let i = 0; i < 500; i++) {
+        let p = heartPoints[Math.floor(Math.random() * heartPoints.length)];
+        particles.push({
+          x: canvas.width / 2 + p.x + Math.random() * 10 - 5,
+          y: canvas.height / 2 + p.y + Math.random() * 10 - 5,
+          size: Math.random() * 3 + 1,
+          dx: Math.random() * 2 - 1,
+          dy: Math.random() * 2 - 1,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          alpha: Math.random() * 0.5 + 0.5
+        });
       }
     }
 
-    function animate() {
-      ctx.clearRect(0, 0, width, height);
-      if (Math.random() < 0.3) hearts.push(new Heart());
+    function animateHeart(scale = 1) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let p of particles) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * scale, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.alpha;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+        p.x += p.dx;
+        p.y += p.dy;
 
-      hearts.forEach((heart, i) => {
-        heart.update();
-        heart.draw();
-        if (heart.alpha <= 0) hearts.splice(i, 1);
-      });
+        if (Math.random() < 0.02) {
+          p.size = Math.random() * 3 + 1;
+          p.alpha = Math.random() * 0.5 + 0.5;
+        }
+      }
+    }
 
-      requestAnimationFrame(animate);
+    let beat = 0;
+    function loop() {
+      let scale = 1 + 0.05 * Math.sin(beat);
+      animateHeart(scale);
+      beat += 0.2;
+      requestAnimationFrame(loop);
     }
 
     startButton.addEventListener("click", () => {
       startButton.style.display = "none";
-      audio.volume = 0.2;
-      audio.play();
-      animate();
+      canvas.style.display = "block";
+      resizeCanvas();
+      createParticles();
+      loop();
+      music.volume = 0.2;
+      music.play();
 
+      // Sau 5 giây thì hiện dòng chữ chúc mừng
       setTimeout(() => {
         message.style.display = "block";
       }, 5000);
-    });
-
-    window.addEventListener("resize", () => {
-      width = window.innerWidth;
-      height = window.innerHeight;
-      canvas.width = width;
-      canvas.height = height;
     });
   </script>
 </body>
