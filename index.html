@@ -1,131 +1,57 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <title>Chúc mừng sinh nhật</title>
+  <meta charset="UTF-8" />
+  <title>Phép màu sinh nhật</title>
   <style>
-    /* ===== RESET CSS CƠ BẢN ===== */
-    * {
+    html, body {
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      background-color: #fff0f5;
-      font-family: 'Arial', sans-serif;
       overflow: hidden;
+      background-color: black;
+      font-family: 'Segoe UI', sans-serif;
     }
 
-    /* ===== NÚT BẮT ĐẦU ===== */
-    #start-container {
-      position: fixed;
+    #startButton {
+      position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      z-index: 100;
-    }
-
-    #start-btn {
       padding: 20px 40px;
-      font-size: 22px;
-      background-color: hotpink;
+      font-size: 28px;
+      background: linear-gradient(45deg, #ff66cc, #ff1493);
       color: white;
-      border: none;
-      border-radius: 10px;
+      border: 3px solid white;
+      border-radius: 15px;
+      box-shadow: 0 0 30px rgba(255, 20, 147, 0.8);
       cursor: pointer;
-      box-shadow: 0 0 20px rgba(255, 20, 147, 0.6);
-      transition: background 0.3s;
+      z-index: 10;
+      animation: pulse 2s infinite;
     }
 
-    #start-btn:hover {
-      background-color: deeppink;
+    @keyframes pulse {
+      0% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-50%, -50%) scale(1.1); }
+      100% { transform: translate(-50%, -50%) scale(1); }
     }
 
-    /* ===== TRÁI TIM LỚN Ở GIỮA MÀN HÌNH ===== */
-    .heart-container {
-      width: 100px;
-      height: 90px;
-      position: fixed;
-      top: 40%;
-      left: 50%;
-      transform: translate(-50%, -50%) rotate(-45deg);
-      background: hotpink;
-      animation: pulse 1s infinite;
-      display: none; /* Ẩn ban đầu, chỉ hiện khi nhấn nút */
-    }
-
-    .heart-container::before,
-    .heart-container::after {
-      content: "";
-      width: 100px;
-      height: 90px;
+    #heartCanvas {
       position: absolute;
-      background: hotpink;
-      border-radius: 50%;
-    }
-
-    .heart-container::before {
-      top: -50px;
+      top: 0;
       left: 0;
     }
 
-    .heart-container::after {
-      left: 50px;
-      top: 0;
-    }
-
-    /* ===== HIỆU ỨNG ĐẬP TIM ===== */
-    @keyframes pulse {
-      0% {
-        transform: translate(-50%, -50%) rotate(-45deg) scale(1);
-      }
-      50% {
-        transform: translate(-50%, -50%) rotate(-45deg) scale(1.2);
-      }
-      100% {
-        transform: translate(-50%, -50%) rotate(-45deg) scale(1);
-      }
-    }
-
-    /* ===== TRÁI TIM NHỎ BAY LÊN ===== */
-    .floating-heart {
-      width: 10px;
-      height: 10px;
-      background-color: red;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      border-radius: 50%;
-      animation: float-up 2s linear;
-      opacity: 0.8;
-      pointer-events: none;
-    }
-
-    @keyframes float-up {
-      0% {
-        transform: translate(-50%, -50%) scale(1);
-        opacity: 1;
-      }
-      100% {
-        transform: translate(-50%, -200%) scale(0.5);
-        opacity: 0;
-      }
-    }
-
-    /* ===== DÒNG CHỮ CHÚC MỪNG ===== */
     #message {
       display: none;
-      position: fixed;
+      position: absolute;
       top: 70%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 28px;
-      color: #ff1493;
-      text-shadow: 1px 1px 3px white;
+      width: 100%;
       text-align: center;
+      font-size: 30px;
+      color: pink;
+      text-shadow: 2px 2px 5px white;
       z-index: 10;
-      animation: fadeIn 2s ease-in-out;
+      animation: fadeIn 2s ease-in;
     }
 
     @keyframes fadeIn {
@@ -135,70 +61,85 @@
   </style>
 </head>
 <body>
-
-  <!-- NÚT BẮT ĐẦU -->
-  <div id="start-container">
-    <button id="start-btn">Bấm vào đây nè</button>
-  </div>
-
-  <!-- TRÁI TIM LỚN -->
-  <div class="heart-container" id="heart"></div>
-
-  <!-- NHẠC NỀN -->
-  <audio id="bg-music" src="phepmau.mp3"></audio>
-
-  <!-- DÒNG CHỮ CHÚC MỪNG -->
+  <button id="startButton">Bắt đầu</button>
+  <canvas id="heartCanvas"></canvas>
   <div id="message">Chúc bé iu sinh nhật vui vẻ và nụ cười luôn thật tươi trên môi nha</div>
 
+  <audio id="bgMusic" src="phepmau.mp3"></audio>
+
   <script>
-    const startBtn = document.getElementById("start-btn");
-    const music = document.getElementById("bg-music");
-    const heart = document.getElementById("heart");
+    const startButton = document.getElementById("startButton");
+    const canvas = document.getElementById("heartCanvas");
+    const ctx = canvas.getContext("2d");
+    const message = document.getElementById("message");
+    const audio = document.getElementById("bgMusic");
 
-    // BẮT SỰ KIỆN CLICK VÀO NÚT BẮT ĐẦU
-    startBtn.addEventListener("click", () => {
-      // Ẩn nút bấm
-      document.getElementById("start-container").style.display = "none";
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
 
-      // Phát nhạc (đã giảm âm lượng)
-      music.volume = 0.3;
-      music.play();
+    let hearts = [];
 
-      // Hiện trái tim lớn
-      heart.style.display = "block";
+    class Heart {
+      constructor() {
+        this.x = Math.random() * width;
+        this.y = height + Math.random() * 100;
+        this.size = Math.random() * 10 + 10;
+        this.speed = Math.random() * 1.5 + 0.5;
+        this.color = `hsl(${Math.random() * 360}, 100%, 70%)`;
+        this.alpha = 1;
+      }
 
-      // Sau 5 giây hiện lời chúc
+      update() {
+        this.y -= this.speed;
+        this.alpha -= 0.005;
+      }
+
+      draw() {
+        ctx.save();
+        ctx.globalAlpha = this.alpha;
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        const x = this.x, y = this.y, size = this.size;
+        ctx.moveTo(x, y);
+        ctx.bezierCurveTo(x - size, y - size, x - size * 1.5, y + size / 2, x, y + size);
+        ctx.bezierCurveTo(x + size * 1.5, y + size / 2, x + size, y - size, x, y);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      if (Math.random() < 0.3) hearts.push(new Heart());
+
+      hearts.forEach((heart, i) => {
+        heart.update();
+        heart.draw();
+        if (heart.alpha <= 0) hearts.splice(i, 1);
+      });
+
+      requestAnimationFrame(animate);
+    }
+
+    startButton.addEventListener("click", () => {
+      startButton.style.display = "none";
+      audio.volume = 0.2;
+      audio.play();
+      animate();
+
       setTimeout(() => {
-        document.getElementById("message").style.display = "block";
+        message.style.display = "block";
       }, 5000);
-
-      // Tạo nhiều trái tim nhỏ bay lấp lánh
-      setInterval(() => {
-        createFloatingHeart();
-      }, 300); // cứ 300ms tạo 1 trái tim nhỏ
     });
 
-    // HÀM TẠO TRÁI TIM NHỎ BAY LÊN
-    function createFloatingHeart() {
-      const heart = document.createElement("div");
-      heart.className = "floating-heart";
-      heart.style.left = `${Math.random() * 100}%`;
-      heart.style.top = `${Math.random() * 100}%`;
-      heart.style.backgroundColor = getRandomColor();
-      heart.style.transform = `scale(${Math.random() + 0.5})`;
-      document.body.appendChild(heart);
-
-      // Tự động xóa sau 2 giây để tránh bị "loạn"
-      setTimeout(() => {
-        heart.remove();
-      }, 2000);
-    }
-
-    // HÀM CHỌN MÀU NGẪU NHIÊN CHO TRÁI TIM NHỎ
-    function getRandomColor() {
-      const colors = ["#ff69b4", "#ff1493", "#db7093", "#ff6347", "#ffa07a", "#ffc0cb", "#ff4500"];
-      return colors[Math.floor(Math.random() * colors.length)];
-    }
+    window.addEventListener("resize", () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    });
   </script>
 </body>
 </html>
