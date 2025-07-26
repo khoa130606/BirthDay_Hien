@@ -1,191 +1,179 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Chúc Mừng Sinh Nhật!</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Surprise Birthday</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
   <style>
-    body {
-      background: linear-gradient(to right, #ffe0ec, #fceabb);
-      font-family: 'Comic Sans MS', cursive, sans-serif;
-      text-align: center;
-      padding: 50px;
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+      font-family: 'Pacifico', cursive;
+    }
+    body, html {
+      height: 100%;
+      background: linear-gradient(to bottom, #000000, #1a1a1a);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
       overflow: hidden;
     }
-
-    h1 {
-      font-size: 3em;
-      color: #d63384;
+    .loading {
+      font-size: 2rem;
+      animation: dots 1.5s infinite;
     }
-
-    button {
-      font-size: 1.5em;
-      padding: 15px 30px;
-      background-color: #ff69b4;
+    @keyframes dots {
+      0% { content: ""; }
+      33% { content: "."; }
+      66% { content: ".."; }
+      100% { content: "..."; }
+    }
+    .hidden { display: none; }
+    .btn {
+      padding: 1em 2em;
+      background-color: #ff66cc;
       border: none;
       color: white;
+      font-size: 1.5rem;
+      margin-top: 2rem;
       border-radius: 10px;
       cursor: pointer;
-      transition: transform 0.2s;
+      animation: pulse 1.5s infinite;
     }
-
-    button:hover {
-      transform: scale(1.1);
-      background-color: #ff1493;
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
     }
-
-    #message {
-      margin-top: 30px;
-      font-size: 2em;
-      color: #6a0572;
-      display: none;
+    .card {
+      perspective: 1000px;
     }
-
-    /* Trái tim */
-    .heart {
+    .inner-card {
+      width: 300px; height: 200px;
+      transform-style: preserve-3d;
+      transition: transform 1s;
+      cursor: pointer;
+    }
+    .card:hover .inner-card {
+      transform: rotateY(180deg);
+    }
+    .front, .back {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 120px;
-      height: 120px;
-      background-color: #ff4d88;
-      transform: rotate(-45deg) translate(-50%, -50%);
-      animation: heartbeat 1s infinite;
-      z-index: 1;
+      width: 300px; height: 200px;
+      backface-visibility: hidden;
+      background: pink;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+      font-size: 1.2rem;
     }
-
-    .heart::before,
-    .heart::after {
-      content: "";
-      position: absolute;
-      width: 120px;
-      height: 120px;
-      background-color: #ff4d88;
-      border-radius: 50%;
+    .back {
+      background: #ffcccc;
+      transform: rotateY(180deg);
+      color: #000;
     }
-
-    .heart::before {
-      top: -60px;
-      left: 0;
+    .hearts span {
+      font-size: 1.5rem;
+      opacity: 0;
+      transition: opacity 0.5s ease-in;
     }
-
-    .heart::after {
-      left: 60px;
-      top: 0;
+    .hearts span:hover {
+      opacity: 1;
     }
-
-    .name {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) rotate(45deg);
-      font-size: 1.5em;
-      color: white;
-      font-weight: bold;
-      z-index: 2;
-      animation: heartbeat 1s infinite; /* chữ cũng đập theo trái tim */
-    }
-
-    @keyframes heartbeat {
-      0%, 100% { transform: rotate(-45deg) scale(1); }
-      25% { transform: rotate(-45deg) scale(1.1); }
-      50% { transform: rotate(-45deg) scale(1.2); }
-      75% { transform: rotate(-45deg) scale(1.1); }
-    }
-
-    canvas {
+    #fireworks {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0; right: 0; bottom: 0;
       pointer-events: none;
-      z-index: 0;
+      z-index: 100;
+    }
+    .message {
+      font-size: 2rem;
+      margin-top: 2rem;
+      animation: fadeIn 2s ease-in forwards;
+      opacity: 0;
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+    .password {
+      margin-top: 1rem;
+    }
+    .password input {
+      padding: 0.5em;
+      border-radius: 5px;
+      border: none;
+      font-size: 1rem;
     }
   </style>
 </head>
 <body>
+  <div id="step1">
+    <div class="loading">Đang chuẩn bị món quà<span class="dots">...</span></div>
+  </div>
 
-  <div class="heart"></div>
-  <div class="name">Hiền</div>
+  <div id="step2" class="hidden">
+    <button class="btn" onclick="showCard()">Mở món quà</button>
+  </div>
 
-  <h1>🎉 Chúc Mừng Sinh Nhật! 🎂</h1>
-  <button onclick="showSurprise()">Bấm vào đây để nhận quà 🎁</button>
-  <div id="message">💖 Chúc bạn một tuổi mới thật nhiều niềm vui, sức khỏe và thành công! 💖</div>
+  <div id="step3" class="hidden">
+    <div class="card" onclick="showFireworks()">
+      <div class="inner-card">
+        <div class="front">Nhấp để mở thiệp</div>
+        <div class="back">
+          <div class="hearts">
+            <span>🎉</span>
+            <span>Chúc</span>
+            <span>mừng</span>
+            <span>sinh</span>
+            <span>nhật!</span>
+            <span>🎂</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <canvas id="confetti"></canvas>
+  <canvas id="fireworks" class="hidden"></canvas>
+
+  <div id="step4" class="hidden">
+    <div class="password">
+      <input type="password" id="pw" placeholder="Nhập mật khẩu">
+      <button onclick="checkPW()">Xem lời nhắn</button>
+    </div>
+    <div id="secret" class="message hidden">Chúc bạn luôn hạnh phúc và đạt được mọi điều bạn mơ ước ❤️</div>
+  </div>
+
+  <audio id="song" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
 
   <script>
-    function showSurprise() {
-      document.getElementById("message").style.display = "block";
-      startConfetti();
+    setTimeout(() => {
+      document.getElementById('step1').classList.add('hidden');
+      document.getElementById('step2').classList.remove('hidden');
+    }, 3000);
+
+    function showCard() {
+      document.getElementById('step2').classList.add('hidden');
+      document.getElementById('step3').classList.remove('hidden');
     }
 
-    // Confetti effect
-    const canvas = document.getElementById("confetti");
-    const ctx = canvas.getContext("2d");
-    let confettis = [];
-
-    window.addEventListener('resize', () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    });
-
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    function randomColor() {
-      const colors = ['#ff4d4d', '#ffff66', '#66ff66', '#66b3ff', '#ff99ff'];
-      return colors[Math.floor(Math.random() * colors.length)];
+    function showFireworks() {
+      document.getElementById('step3').classList.add('hidden');
+      document.getElementById('fireworks').classList.remove('hidden');
+      document.getElementById('step4').classList.remove('hidden');
+      document.getElementById('song').play();
     }
 
-    function createConfetti() {
-      for (let i = 0; i < 300; i++) {
-        confettis.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height - canvas.height,
-          r: Math.random() * 6 + 4,
-          d: Math.random() * 10 + 5,
-          color: randomColor(),
-          tilt: Math.random() * 10 - 5,
-        });
+    function checkPW() {
+      const pw = document.getElementById('pw').value;
+      if (pw === 'yeuem') {
+        document.getElementById('secret').classList.remove('hidden');
+      } else {
+        alert('Sai mật khẩu rồi nha 😝');
       }
     }
-
-    function drawConfetti() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      confettis.forEach(c => {
-        ctx.beginPath();
-        ctx.lineWidth = c.r / 2;
-        ctx.strokeStyle = c.color;
-        ctx.moveTo(c.x + c.tilt + c.r / 2, c.y);
-        ctx.lineTo(c.x + c.tilt, c.y + c.tilt + c.r);
-        ctx.stroke();
-      });
-      moveConfetti();
-    }
-
-    function moveConfetti() {
-      confettis.forEach(c => {
-        c.y += Math.cos(c.d) + 1 + c.r / 2;
-        c.x += Math.sin(c.d);
-        if (c.y > canvas.height) {
-          c.y = -10;
-          c.x = Math.random() * canvas.width;
-        }
-      });
-    }
-
-    function startConfetti() {
-      createConfetti();
-      const interval = setInterval(drawConfetti, 20);
-      setTimeout(() => {
-        clearInterval(interval);
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-      }, 8000);
-    }
   </script>
-
 </body>
 </html>
