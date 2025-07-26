@@ -2,119 +2,131 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Phép Màu</title>
+  <title>Chúc mừng sinh nhật</title>
   <style>
     body {
+      margin: 0;
       background-color: black;
-      color: white;
-      font-family: 'Courier New', monospace;
-      text-align: center;
-      padding-top: 100px;
       overflow: hidden;
+      font-family: Arial, sans-serif;
     }
 
-    #startBtn {
-      padding: 20px 40px;
-      font-size: 24px;
-      background-color: #4CAF50;
+    #start-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
       color: white;
+      z-index: 10;
+    }
+
+    #start-button {
+      font-size: 24px;
+      padding: 10px 30px;
+      background-color: #ff69b4;
       border: none;
-      border-radius: 12px;
+      color: white;
+      border-radius: 10px;
       cursor: pointer;
-      z-index: 2;
-      position: relative;
     }
 
-    #startBtn:hover {
-      background-color: #45a049;
-    }
-
-    .heart {
+    #heart-canvas {
       position: absolute;
-      width: 15px;
-      height: 15px;
-      background: red;
-      transform: rotate(45deg);
-      animation: pulse 1.2s infinite;
-      opacity: 0.8;
-      z-index: 1;
-    }
-
-    .heart::before,
-    .heart::after {
-      content: "";
-      position: absolute;
-      width: 15px;
-      height: 15px;
-      background: red;
-      border-radius: 50%;
-    }
-
-    .heart::before {
-      top: -7.5px;
-      left: 0;
-    }
-
-    .heart::after {
       top: 0;
-      left: -7.5px;
-    }
-
-    @keyframes pulse {
-      0% {
-        transform: scale(1) rotate(45deg);
-        opacity: 1;
-      }
-      50% {
-        transform: scale(1.5) rotate(45deg);
-        opacity: 0.7;
-      }
-      100% {
-        transform: scale(1) rotate(45deg);
-        opacity: 1;
-      }
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: none;
     }
   </style>
 </head>
 <body>
-  <h1>🎵 Chào mừng đến với Phép Màu 🎵</h1>
-  <button id="startBtn">Bấm để phát nhạc</button>
 
-  <audio id="audio" loop>
-    <source src="phepmau.mp3" type="audio/mpeg">
-    Trình duyệt của bạn không hỗ trợ phát nhạc.
-  </audio>
+<div id="start-container">
+  <h1>Chúc mừng sinh nhật 💖</h1>
+  <button id="start-button">Bắt đầu</button>
+</div>
 
-  <script>
-    const button = document.getElementById("startBtn");
-    const audio = document.getElementById("audio");
+<canvas id="heart-canvas"></canvas>
+<audio id="music" src="phepmau.mp3"></audio>
 
-    function createHeart() {
-      const heart = document.createElement("div");
-      heart.className = "heart";
+<script>
+  const startButton = document.getElementById('start-button');
+  const startContainer = document.getElementById('start-container');
+  const canvas = document.getElementById('heart-canvas');
+  const ctx = canvas.getContext('2d');
+  const music = document.getElementById('music');
+  music.volume = 0.3; // giảm âm lượng
 
-      const colors = ["#ff4d4d", "#ff66cc", "#66ffff", "#ffff66", "#ff9966"];
-      heart.style.background = colors[Math.floor(Math.random() * colors.length)];
-      heart.style.top = Math.random() * window.innerHeight + "px";
-      heart.style.left = Math.random() * window.innerWidth + "px";
-      heart.style.animationDuration = (0.8 + Math.random() * 1.2) + "s";
-      document.body.appendChild(heart);
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 
-      setTimeout(() => heart.remove(), 2000);
-    }
+  const particles = [];
+  const heartPoints = [];
 
-    button.addEventListener("click", () => {
-      audio.volume = 0.2; // 🔉 Giảm âm lượng còn 20%
-      audio.play().then(() => {
-        button.innerText = "Đang phát 🎶";
-        button.disabled = true;
+  function heartFunction(t) {
+    const x = 16 * Math.pow(Math.sin(t), 3);
+    const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+    return {x, y};
+  }
 
-        // Bắt đầu hiệu ứng trái tim nhịp đập
-        setInterval(createHeart, 200);
-      }).catch(err => {
-        alert("Không thể phát nhạc: " + err.message);
-      });
+  for (let i = 0; i < 200; i++) {
+    const t = Math.PI * 2 * Math.random();
+    const point = heartFunction(t);
+    heartPoints.push({
+      x: point.x * 20 + canvas.width / 2,
+      y: point.y * 20 + canvas.height / 2
     });
-  </script>
+  }
+
+  function createParticles() {
+    particles.length = 0;
+    for (let i = 0; i < heartPoints.length; i++) {
+      const color = `hsl(${Math.random() * 360}, 100%, 70%)`;
+      particles.push({
+        x: heartPoints[i].x,
+        y: heartPoints[i].y,
+        size: Math.random() * 3 + 1,
+        color,
+        baseSize: Math.random() * 3 + 1
+      });
+    }
+  }
+
+  function animate() {
+    requestAnimationFrame(animate);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    const scale = 1 + Math.sin(Date.now() * 0.003) * 0.05;
+
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+      ctx.beginPath();
+      ctx.arc(
+        (p.x - canvas.width / 2) * scale + canvas.width / 2,
+        (p.y - canvas.height / 2) * scale + canvas.height / 2,
+        p.baseSize * scale,
+        0,
+        Math.PI * 2
+      );
+      ctx.fillStyle = p.color;
+      ctx.fill();
+    }
+  }
+
+  startButton.addEventListener('click', () => {
+    startContainer.style.display = 'none';
+    canvas.style.display = 'block';
+    createParticles();
+    animate();
+    music.play();
+  });
+
+  window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  });
+</script>
 </body>
 </html>
