@@ -2,50 +2,17 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Phép màu</title>
-  <style>
-    body {
-      background: linear-gradient(135deg, #fdfbfb, #ebedee);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      font-family: 'Segoe UI', sans-serif;
-      color: #333;
-      text-align: center;
-    }
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 20px;
-    }
-    .note {
-      font-size: 1rem;
-      color: #666;
-    }
-  </style>
+  <title>Chúc Mừng Sinh Nhật</title>
 </head>
-<body>
-  <h1>🎵 Gửi bạn một phép màu 🎵</h1>
-  <p class="note">(Click vào màn hình để bắt đầu nghe nhạc)</p>
+<body style="text-align: center; background-color: #ffe4e1;">
+  <h1>🎂 Chúc mừng sinh nhật Hiền! 🎉</h1>
+  <p>Chúc bạn tuổi mới thật nhiều niềm vui và hạnh phúc!</p>
 
-  <!-- Nhạc nền -->
-  <audio id="bg-music" loop>
-    <source src="phepmau.mp3" type="audio/mpeg">
-    Trình duyệt của bạn không hỗ trợ audio.
+  <audio controls autoplay>
+    <source src="https://raw.githubusercontent.com/khoa130606/BirthDay_Hien/main/phepmau.mp3" type="audio/mpeg">
+    Trình duyệt của bạn không hỗ trợ phát nhạc.
   </audio>
 
-  <script>
-    const music = document.getElementById('bg-music');
-    music.volume = 0.6;
-
-    // Chỉ phát nhạc sau khi có click
-    document.addEventListener('click', () => {
-      music.play().catch(err => {
-        console.log("Không thể phát nhạc: ", err);
-      });
-    }, { once: true }); // chỉ gọi 1 lần
-  </script>
+  <img src="https://media.giphy.com/media/3orieUe6ejxSFxYCXe/giphy.gif" alt="Happy Birthday" width="300">
 </body>
 </html>
