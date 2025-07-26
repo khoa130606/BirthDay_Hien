@@ -2,83 +2,50 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Gửi Hiền Một Phép Màu</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phép màu</title>
   <style>
     body {
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(135deg, #ffdde1, #ee9ca7);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color: #fff;
-      overflow: hidden;
-      height: 100vh;
-    }
-    .container {
+      background: linear-gradient(135deg, #fdfbfb, #ebedee);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: 'Segoe UI', sans-serif;
+      color: #333;
       text-align: center;
-      position: relative;
-      top: 50%;
-      transform: translateY(-50%);
     }
     h1 {
-      font-size: 3em;
+      font-size: 2.5rem;
       margin-bottom: 20px;
-      animation: fadeIn 2s ease-in-out;
     }
-    .heart {
-      width: 100px;
-      height: 90px;
-      position: relative;
-      margin: 0 auto;
-      animation: beat 1s infinite;
-    }
-    .heart::before,
-    .heart::after {
-      content: "";
-      position: absolute;
-      width: 100px;
-      height: 90px;
-      background: red;
-      border-radius: 50%;
-    }
-    .heart::before {
-      left: 50px;
-      top: 0;
-    }
-    .heart::after {
-      left: 0;
-      top: 0;
-    }
-    .heart {
-      transform: rotate(-45deg);
-      background: red;
-    }
-    @keyframes beat {
-      0%, 100% { transform: rotate(-45deg) scale(1); }
-      50% { transform: rotate(-45deg) scale(1.1); }
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
+    .note {
+      font-size: 1rem;
+      color: #666;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Gửi Hiền một phép màu 💫</h1>
-    <div class="heart"></div>
-    <p style="margin-top:20px; font-size:1.2em;">Chúc Hiền luôn hạnh phúc như điều kỳ diệu này 🧡</p>
-  </div>
+  <h1>🎵 Gửi bạn một phép màu 🎵</h1>
+  <p class="note">(Click vào màn hình để bắt đầu nghe nhạc)</p>
 
   <!-- Nhạc nền -->
-  <audio id="bg-music" autoplay loop>
+  <audio id="bg-music" loop>
     <source src="phepmau.mp3" type="audio/mpeg">
-    Trình duyệt của bạn không hỗ trợ phát nhạc.
+    Trình duyệt của bạn không hỗ trợ audio.
   </audio>
 
   <script>
-    const music = document.getElementById("bg-music");
-    music.volume = 0.3; // chỉnh âm lượng nhẹ nhàng
+    const music = document.getElementById('bg-music');
+    music.volume = 0.6;
+
+    // Chỉ phát nhạc sau khi có click
+    document.addEventListener('click', () => {
+      music.play().catch(err => {
+        console.log("Không thể phát nhạc: ", err);
+      });
+    }, { once: true }); // chỉ gọi 1 lần
   </script>
 </body>
 </html>
