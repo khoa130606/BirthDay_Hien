@@ -1,18 +1,57 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8" />
-  <title>Chúc Mừng Sinh Nhật</title>
+  <meta charset="UTF-8">
+  <title>Phép Màu</title>
+  <style>
+    body {
+      background-color: #111;
+      color: #fff;
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      padding: 50px;
+    }
+
+    h1 {
+      font-size: 48px;
+      margin-bottom: 20px;
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+      from {
+        text-shadow: 0 0 10px #f0f, 0 0 20px #f0f;
+      }
+      to {
+        text-shadow: 0 0 20px #0ff, 0 0 30px #0ff;
+      }
+    }
+
+    button {
+      padding: 15px 30px;
+      font-size: 18px;
+      background-color: #0ff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 30px;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #0cc;
+    }
+  </style>
 </head>
-<body style="text-align: center; background-color: #ffe4e1;">
-  <h1>🎂 Chúc mừng sinh nhật Hiền! 🎉</h1>
-  <p>Chúc bạn tuổi mới thật nhiều niềm vui và hạnh phúc!</p>
+<body>
+  <h1>Chào mừng bạn đến với Phép Màu</h1>
+  <p>Nhấn nút bên dưới để bắt đầu nghe nhạc nền ✨</p>
+  
+  <button onclick="document.getElementById('bgm').play()">🎵 Bắt đầu phát nhạc</button>
 
-  <audio controls autoplay>
+  <audio id="bgm" loop>
     <source src="https://docs.google.com/uc?export=download&id=1LZSosDjQiEw0dKIWxHoen-bN7bcx9LFw" type="audio/mpeg">
-    Trình duyệt của bạn không hỗ trợ phát nhạc.
+    Trình duyệt không hỗ trợ audio.
   </audio>
-
-  <img src="https://media.giphy.com/media/3orieUe6ejxSFxYCXe/giphy.gif" alt="Happy Birthday" width="300">
 </body>
 </html>
