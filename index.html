@@ -111,42 +111,17 @@
 </head>
 <body>
   <div id="step1">
-    <div class="loading">Đang chuẩn bị món quà<span class="dots">...</span></div>
+    <div class="loading"> Èeeeeeeeee!!!!<span class="dots">...</span></div>
   </div>
 
   <div id="step2" class="hidden">
-    <button class="btn" onclick="showCard()">Mở món quà</button>
-  </div>
-
-  <div id="step3" class="hidden">
-    <div class="card" onclick="showFireworks()">
-      <div class="inner-card">
-        <div class="front">Nhấp để mở thiệp</div>
-        <div class="back">
-          <div class="hearts">
-            <span>🎉</span>
-            <span>Chúc</span>
-            <span>mừng</span>
-            <span>sinh</span>
-            <span>nhật!</span>
-            <span>🎂</span>
-          </div>
-        </div>
-      </div>
+    <button class="btnik">
+      <button onclick="checkPW()">Bấm ik!</button>
     </div>
+    <div id="secret" class="message hidden">Chúc bé iu luôn hạnh phúc và đạt được nhiều thành công trong con đường học tập nhen❤️</div>
   </div>
 
-  <canvas id="fireworks" class="hidden"></canvas>
-
-  <div id="step4" class="hidden">
-    <div class="password">
-      <input type="password" id="pw" placeholder="Nhập mật khẩu">
-      <button onclick="checkPW()">Xem lời nhắn</button>
-    </div>
-    <div id="secret" class="message hidden">Chúc bạn luôn hạnh phúc và đạt được mọi điều bạn mơ ước ❤️</div>
-  </div>
-
-  <audio id="song" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+  <audio id="song" src="https://www.youtube.com/watch?v=HhcTaxixdSI"></audio>
 
   <script>
     setTimeout(() => {
@@ -168,7 +143,7 @@
 
     function checkPW() {
       const pw = document.getElementById('pw').value;
-      if (pw === 'yeuem') {
+      if (pw === '10082006') {
         document.getElementById('secret').classList.remove('hidden');
       } else {
         alert('Sai mật khẩu rồi nha 😝');
