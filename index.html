@@ -5,53 +5,47 @@
   <title>Phép Màu</title>
   <style>
     body {
-      background-color: #111;
-      color: #fff;
-      font-family: 'Arial', sans-serif;
+      background-color: black;
+      color: white;
+      font-family: 'Courier New', monospace;
       text-align: center;
-      padding: 50px;
+      padding-top: 100px;
     }
-
-    h1 {
-      font-size: 48px;
-      margin-bottom: 20px;
-      animation: glow 2s ease-in-out infinite alternate;
-    }
-
-    @keyframes glow {
-      from {
-        text-shadow: 0 0 10px #f0f, 0 0 20px #f0f;
-      }
-      to {
-        text-shadow: 0 0 20px #0ff, 0 0 30px #0ff;
-      }
-    }
-
-    button {
-      padding: 15px 30px;
-      font-size: 18px;
-      background-color: #0ff;
+    #startBtn {
+      padding: 20px 40px;
+      font-size: 24px;
+      background-color: #4CAF50;
+      color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 12px;
       cursor: pointer;
-      margin-top: 30px;
-      transition: background-color 0.3s;
     }
-
-    button:hover {
-      background-color: #0cc;
+    #startBtn:hover {
+      background-color: #45a049;
     }
   </style>
 </head>
 <body>
-  <h1>Chào mừng bạn đến với Phép Màu</h1>
-  <p>Nhấn nút bên dưới để bắt đầu nghe nhạc nền ✨</p>
-  
-  <button onclick="document.getElementById('bgm').play()">🎵 Bắt đầu phát nhạc</button>
+  <h1>🎵 Chào mừng đến với Phép Màu 🎵</h1>
+  <button id="startBtn">Bấm để phát nhạc</button>
 
-  <audio id="bgm" loop>
-    <source src="https://docs.google.com/uc?export=download&id=1LZSosDjQiEw0dKIWxHoen-bN7bcx9LFw" type="audio/mpeg">
-    Trình duyệt không hỗ trợ audio.
+  <audio id="audio" loop>
+    <source src="phepmau.mp3" type="audio/mpeg">
+    Trình duyệt của bạn không hỗ trợ phát nhạc.
   </audio>
+
+  <script>
+    const button = document.getElementById("startBtn");
+    const audio = document.getElementById("audio");
+
+    button.addEventListener("click", () => {
+      audio.play().then(() => {
+        button.innerText = "Đang phát 🎶";
+        button.disabled = true;
+      }).catch(err => {
+        alert("Không thể phát nhạc: " + err.message);
+      });
+    });
+  </script>
 </body>
 </html>
