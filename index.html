@@ -10,7 +10,9 @@
       font-family: 'Courier New', monospace;
       text-align: center;
       padding-top: 100px;
+      overflow: hidden;
     }
+
     #startBtn {
       padding: 20px 40px;
       font-size: 24px;
@@ -19,9 +21,58 @@
       border: none;
       border-radius: 12px;
       cursor: pointer;
+      z-index: 2;
+      position: relative;
     }
+
     #startBtn:hover {
       background-color: #45a049;
+    }
+
+    .heart {
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      background: red;
+      transform: rotate(45deg);
+      animation: pulse 1.2s infinite;
+      opacity: 0.8;
+      z-index: 1;
+    }
+
+    .heart::before,
+    .heart::after {
+      content: "";
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      background: red;
+      border-radius: 50%;
+    }
+
+    .heart::before {
+      top: -7.5px;
+      left: 0;
+    }
+
+    .heart::after {
+      top: 0;
+      left: -7.5px;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1) rotate(45deg);
+        opacity: 1;
+      }
+      50% {
+        transform: scale(1.5) rotate(45deg);
+        opacity: 0.7;
+      }
+      100% {
+        transform: scale(1) rotate(45deg);
+        opacity: 1;
+      }
     }
   </style>
 </head>
@@ -38,10 +89,28 @@
     const button = document.getElementById("startBtn");
     const audio = document.getElementById("audio");
 
+    function createHeart() {
+      const heart = document.createElement("div");
+      heart.className = "heart";
+
+      const colors = ["#ff4d4d", "#ff66cc", "#66ffff", "#ffff66", "#ff9966"];
+      heart.style.background = colors[Math.floor(Math.random() * colors.length)];
+      heart.style.top = Math.random() * window.innerHeight + "px";
+      heart.style.left = Math.random() * window.innerWidth + "px";
+      heart.style.animationDuration = (0.8 + Math.random() * 1.2) + "s";
+      document.body.appendChild(heart);
+
+      setTimeout(() => heart.remove(), 2000);
+    }
+
     button.addEventListener("click", () => {
+      audio.volume = 0.2; // 🔉 Giảm âm lượng còn 20%
       audio.play().then(() => {
         button.innerText = "Đang phát 🎶";
         button.disabled = true;
+
+        // Bắt đầu hiệu ứng trái tim nhịp đập
+        setInterval(createHeart, 200);
       }).catch(err => {
         alert("Không thể phát nhạc: " + err.message);
       });
