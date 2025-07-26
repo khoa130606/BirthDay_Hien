@@ -3,152 +3,82 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>🎉 Chúc Mừng Sinh Nhật 🎉</title>
-  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet"/>
+  <title>Gửi Hiền Một Phép Màu</title>
   <style>
-    * {
-      margin: 0; padding: 0; box-sizing: border-box;
-      font-family: 'Pacifico', cursive;
-    }
     body {
-      background: linear-gradient(to bottom, #000, #111);
-      height: 100vh;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #ffdde1, #ee9ca7);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #fff;
       overflow: hidden;
+      height: 100vh;
     }
-
-    .loading {
-      font-size: 2.5rem;
-      animation: pulse 1s infinite;
+    .container {
+      text-align: center;
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);
     }
-
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
+    h1 {
+      font-size: 3em;
+      margin-bottom: 20px;
+      animation: fadeIn 2s ease-in-out;
     }
-
-    .hidden {
-      display: none;
-    }
-
-    .btn {
-      margin-top: 2rem;
-      padding: 1em 2em;
-      font-size: 1.2rem;
-      background-color: #ff66cc;
-      border: none;
-      color: white;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-
-    .password {
-      margin-top: 1rem;
-    }
-
-    .password input {
-      padding: 0.5em;
-      font-size: 1rem;
-      border-radius: 8px;
-      border: none;
-    }
-
-    .message {
-      margin-top: 2rem;
-      font-size: 2rem;
-      opacity: 0;
-      animation: fadeIn 2s forwards;
-      color: #ffb6c1;
-    }
-
-    @keyframes fadeIn {
-      to { opacity: 1; }
-    }
-
     .heart {
       width: 100px;
       height: 90px;
       position: relative;
-      background: #ff4d88;
-      transform: rotate(-45deg);
+      margin: 0 auto;
       animation: beat 1s infinite;
-      margin-top: 2rem;
     }
-
     .heart::before,
     .heart::after {
       content: "";
+      position: absolute;
       width: 100px;
       height: 90px;
-      position: absolute;
-      background: #ff4d88;
+      background: red;
       border-radius: 50%;
     }
-
     .heart::before {
-      top: -50px;
-      left: 0;
-    }
-
-    .heart::after {
       left: 50px;
       top: 0;
     }
-
+    .heart::after {
+      left: 0;
+      top: 0;
+    }
+    .heart {
+      transform: rotate(-45deg);
+      background: red;
+    }
     @keyframes beat {
       0%, 100% { transform: rotate(-45deg) scale(1); }
       50% { transform: rotate(-45deg) scale(1.1); }
     }
-
-    .name {
-      position: absolute;
-      top: 30%;
-      left: 30%;
-      font-size: 1.2rem;
-      color: white;
-      animation: beat 1s infinite;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 <body>
-
-  <div id="step1">
-    <div class="loading">Èeeeeeeeee!!!!</div>
+  <div class="container">
+    <h1>Gửi Hiền một phép màu 💫</h1>
+    <div class="heart"></div>
+    <p style="margin-top:20px; font-size:1.2em;">Chúc Hiền luôn hạnh phúc như điều kỳ diệu này 🧡</p>
   </div>
 
-  <div id="step2" class="hidden">
-    <div class="password">
-      <input type="password" id="pw" placeholder="Nhập mật khẩu 🎁">
-    </div>
-    <button class="btn" onclick="checkPW()">Bấm ik!</button>
-    <div id="secret" class="message hidden">
-      Chúc bé iu luôn hạnh phúc và đạt được nhiều thành công trong con đường học tập nhen ❤️
-      <div class="heart">
-        <div class="name">Hiền</div>
-      </div>
-    </div>
-  </div>
+  <!-- Nhạc nền -->
+  <audio id="bg-music" autoplay loop>
+    <source src="phepmau.mp3" type="audio/mpeg">
+    Trình duyệt của bạn không hỗ trợ phát nhạc.
+  </audio>
 
   <script>
-    // Hiệu ứng loading 3 giây
-    setTimeout(() => {
-      document.getElementById("step1").classList.add("hidden");
-      document.getElementById("step2").classList.remove("hidden");
-    }, 3000);
-
-    function checkPW() {
-      const pw = document.getElementById("pw").value;
-      if (pw === "10082006") {
-        document.getElementById("secret").classList.remove("hidden");
-      } else {
-        alert("Sai mật khẩu rồi nha 😝");
-      }
-    }
+    const music = document.getElementById("bg-music");
+    music.volume = 0.3; // chỉnh âm lượng nhẹ nhàng
   </script>
 </body>
 </html>
