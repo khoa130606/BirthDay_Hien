@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chúc Mừng Sinh Nhật!</title>
+  <style>
+    body {
+      background: linear-gradient(to right, #ffe0ec, #fceabb);
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      text-align: center;
+      padding: 50px;
+      overflow: hidden;
+    }
+
+    h1 {
+      font-size: 3em;
+      color: #d63384;
+    }
+
+    button {
+      font-size: 1.5em;
+      padding: 15px 30px;
+      background-color: #ff69b4;
+      border: none;
+      color: white;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    button:hover {
+      transform: scale(1.1);
+      background-color: #ff1493;
+    }
+
+    #message {
+      margin-top: 30px;
+      font-size: 2em;
+      color: #6a0572;
+      display: none;
+    }
+
+    /* Trái tim */
+    .heart {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 120px;
+      height: 120px;
+      background-color: #ff4d88;
+      transform: rotate(-45deg) translate(-50%, -50%);
+      animation: heartbeat 1s infinite;
+      z-index: 1;
+    }
+
+    .heart::before,
+    .heart::after {
+      content: "";
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      background-color: #ff4d88;
+      border-radius: 50%;
+    }
+
+    .heart::before {
+      top: -60px;
+      left: 0;
+    }
+
+    .heart::after {
+      left: 60px;
+      top: 0;
+    }
+
+    .name {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(45deg);
+      font-size: 1.5em;
+      color: white;
+      font-weight: bold;
+      z-index: 2;
+      animation: heartbeat 1s infinite; /* chữ cũng đập theo trái tim */
+    }
+
+    @keyframes heartbeat {
+      0%, 100% { transform: rotate(-45deg) scale(1); }
+      25% { transform: rotate(-45deg) scale(1.1); }
+      50% { transform: rotate(-45deg) scale(1.2); }
+      75% { transform: rotate(-45deg) scale(1.1); }
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="heart"></div>
+  <div class="name">Hiền</div>
+
+  <h1>🎉 Chúc Mừng Sinh Nhật! 🎂</h1>
+  <button onclick="showSurprise()">Bấm vào đây để nhận quà 🎁</button>
+  <div id="message">💖 Chúc bạn một tuổi mới thật nhiều niềm vui, sức khỏe và thành công! 💖</div>
+
+  <canvas id="confetti"></canvas>
+
+  <script>
+    function showSurprise() {
+      document.getElementById("message").style.display = "block";
+      startConfetti();
+    }
+
+    // Confetti effect
+    const canvas = document.getElementById("confetti");
+    const ctx = canvas.getContext("2d");
+    let confettis = [];
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    function randomColor() {
+      const colors = ['#ff4d4d', '#ffff66', '#66ff66', '#66b3ff', '#ff99ff'];
+      return colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    function createConfetti() {
+      for (let i = 0; i < 300; i++) {
+        confettis.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          r: Math.random() * 6 + 4,
+          d: Math.random() * 10 + 5,
+          color: randomColor(),
+          tilt: Math.random() * 10 - 5,
+        });
+      }
+    }
+
+    function drawConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      confettis.forEach(c => {
+        ctx.beginPath();
+        ctx.lineWidth = c.r / 2;
+        ctx.strokeStyle = c.color;
+        ctx.moveTo(c.x + c.tilt + c.r / 2, c.y);
+        ctx.lineTo(c.x + c.tilt, c.y + c.tilt + c.r);
+        ctx.stroke();
+      });
+      moveConfetti();
+    }
+
+    function moveConfetti() {
+      confettis.forEach(c => {
+        c.y += Math.cos(c.d) + 1 + c.r / 2;
+        c.x += Math.sin(c.d);
+        if (c.y > canvas.height) {
+          c.y = -10;
+          c.x = Math.random() * canvas.width;
+        }
+      });
+    }
+
+    function startConfetti() {
+      createConfetti();
+      const interval = setInterval(drawConfetti, 20);
+      setTimeout(() => {
+        clearInterval(interval);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }, 8000);
+    }
+  </script>
+
+</body>
+</html>
