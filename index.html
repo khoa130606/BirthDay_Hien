@@ -12,19 +12,33 @@
       font-family: 'Comic Sans MS', cursive;
     }
 
-    #startButton {
+    #passwordContainer {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      font-size: 2rem;
-      padding: 1rem 2rem;
+      text-align: center;
+      z-index: 10;
+    }
+
+    #passwordInput {
+      font-size: 1.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      text-align: center;
+    }
+
+    #submitPassword {
+      font-size: 1.5rem;
+      padding: 0.5rem 1.5rem;
+      margin-left: 10px;
       background-color: #ff69b4;
       color: white;
       border: none;
-      border-radius: 20px;
+      border-radius: 10px;
       cursor: pointer;
-      z-index: 10;
     }
 
     canvas {
@@ -52,7 +66,7 @@
         blink-caret 0.75s step-end infinite;
       display: none;
       z-index: 5;
-      transition: opacity 2s ease; /* để mờ dần */
+      transition: opacity 2s ease;
     }
 
     @keyframes typing {
@@ -80,11 +94,14 @@
   </style>
 </head>
 <body>
-  <button id="startButton">Bắt đầu</button>
+  <div id="passwordContainer">
+    <input type="password" id="passwordInput" placeholder="Nhập mật khẩu">
+    <button id="submitPassword">OK</button>
+  </div>
+
   <canvas id="heartCanvas"></canvas>
   <div id="message">Chúc bé iu sinh nhật luôn vui vẻ nhé !</div>
 
-  <!-- Thêm các ảnh của bạn -->
   <img class="herPhoto" src="0133a799bdc735996cd6.jpg" alt="Ảnh 1">
   <img class="herPhoto" src="ae86049c1ec2969ccfd3.jpg" alt="Ảnh 2">
   <img class="herPhoto" src="4d61b4feaea026fe7fb1.jpg" alt="Ảnh 3">
@@ -94,7 +111,10 @@
   <audio id="bgMusic" src="phepmau.mp3" preload="auto"></audio>
 
   <script>
-    const startButton = document.getElementById("startButton");
+    const passwordInput = document.getElementById("passwordInput");
+    const submitPassword = document.getElementById("submitPassword");
+    const passwordContainer = document.getElementById("passwordContainer");
+
     const canvas = document.getElementById("heartCanvas");
     const ctx = canvas.getContext("2d");
     const music = document.getElementById("bgMusic");
@@ -171,16 +191,16 @@
           photos[index - 1].style.opacity = "0"; 
         }
         if (index < photos.length) {
-          photos[index].style.opacity = "1"; // hiện ảnh mới
+          photos[index].style.opacity = "1"; 
           index++;
-          setTimeout(showNext, 3000); // mỗi ảnh hiện 3 giây
+          setTimeout(showNext, 3000);
         }
       }
       showNext();
     }
 
-    startButton.addEventListener("click", () => {
-      startButton.style.display = "none";
+    function startEffect() {
+      passwordContainer.style.display = "none";
       canvas.style.display = "block";
       resizeCanvas();
       createParticles();
@@ -188,21 +208,22 @@
       music.volume = 0.2;
       music.play();
 
-      // Sau 5 giây hiện chữ
       setTimeout(() => {
         message.style.display = "block";
-
-        // Sau khi gõ xong chữ (~4s) → mờ dần rồi hiện ảnh
         setTimeout(() => {
           message.style.opacity = "0";
           setTimeout(showPhotosSequentially, 2000);
         }, 8000);
-
       }, 5000);
+    }
+
+    submitPassword.addEventListener("click", () => {
+      if (passwordInput.value === "10082006") {
+        startEffect();
+      } else {
+        alert("Sai mật khẩu rồi 😜");
+      }
     });
   </script>
 </body>
 </html>
-
-
-
