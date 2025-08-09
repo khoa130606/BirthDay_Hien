@@ -52,6 +52,7 @@
         blink-caret 0.75s step-end infinite;
       display: none;
       z-index: 5;
+      transition: opacity 2s ease; /* để mờ dần */
     }
 
     @keyframes typing {
@@ -63,12 +64,33 @@
       from, to { border-color: transparent }
       50% { border-color: white }
     }
+
+    .herPhoto {
+      position: absolute;
+      top: 65%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 300px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px #ff69b4;
+      opacity: 0;
+      transition: opacity 1.5s ease;
+      z-index: 5;
+    }
   </style>
 </head>
 <body>
   <button id="startButton">Bắt đầu</button>
   <canvas id="heartCanvas"></canvas>
   <div id="message">Chúc bé iu sinh nhật luôn vui vẻ nhé !</div>
+
+  <!-- Thêm các ảnh của bạn -->
+  <img class="herPhoto" src="0133a799bdc735996cd6.jpg" alt="Ảnh 1">
+  <img class="herPhoto" src="125e46f253acdbf282bd.jpg" alt="Ảnh 2">
+  <img class="herPhoto" src="4d61b4feaea026fe7fb1.jpg" alt="Ảnh 3">
+  <img class="herPhoto" src="71f37e7d6423ec7db532.jpg" alt="Ảnh 4">
+  <img class="herPhoto" src="ae86049c1ec2969ccfd3.jpg" alt="Ảnh 5">
+
   <audio id="bgMusic" src="phepmau.mp3" preload="auto"></audio>
 
   <script>
@@ -77,6 +99,7 @@
     const ctx = canvas.getContext("2d");
     const music = document.getElementById("bgMusic");
     const message = document.getElementById("message");
+    const photos = document.querySelectorAll(".herPhoto");
 
     let particles = [];
     const colors = ["#ff4d4d", "#ff66cc", "#ffccff", "#ff9999", "#ffe6e6", "#ffb3b3"];
@@ -85,7 +108,6 @@
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     }
-
     window.addEventListener("resize", resizeCanvas);
 
     function createHeartPoints() {
@@ -97,7 +119,6 @@
       }
       return points;
     }
-
     const heartPoints = createHeartPoints();
 
     function createParticles() {
@@ -143,6 +164,21 @@
       requestAnimationFrame(loop);
     }
 
+    function showPhotosSequentially() {
+      let index = 0;
+      function showNext() {
+        if (index > 0) {
+          photos[index - 1].style.opacity = "0"; // ẩn ảnh trước
+        }
+        if (index < photos.length) {
+          photos[index].style.opacity = "1"; // hiện ảnh mới
+          index++;
+          setTimeout(showNext, 3000); // mỗi ảnh hiện 3 giây
+        }
+      }
+      showNext();
+    }
+
     startButton.addEventListener("click", () => {
       startButton.style.display = "none";
       canvas.style.display = "block";
@@ -152,12 +188,18 @@
       music.volume = 0.2;
       music.play();
 
-      // Sau 5 giây thì hiện dòng chữ chúc mừng
+      // Sau 5 giây hiện chữ
       setTimeout(() => {
         message.style.display = "block";
+
+        // Sau khi gõ xong chữ (~4s) → mờ dần rồi hiện ảnh
+        setTimeout(() => {
+          message.style.opacity = "0";
+          setTimeout(showPhotosSequentially, 2000);
+        }, 4000);
+
       }, 5000);
     });
   </script>
 </body>
 </html>
-
