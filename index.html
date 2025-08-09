@@ -67,7 +67,7 @@
 
     .herPhoto {
       position: absolute;
-      top: 65%;
+      top: 55%;
       left: 50%;
       transform: translate(-50%, -50%);
       width: 300px;
@@ -167,8 +167,8 @@
     function showPhotosSequentially() {
       let index = 0;
       function showNext() {
-        if (index > 0) {
-          photos[index - 1].style.opacity = "0"; // ẩn ảnh trước
+        if (index > 0 && index - 1 !== 4) {
+          photos[index - 1].style.opacity = "0"; 
         }
         if (index < photos.length) {
           photos[index].style.opacity = "1"; // hiện ảnh mới
@@ -203,5 +203,6 @@
   </script>
 </body>
 </html>
+
 
 
